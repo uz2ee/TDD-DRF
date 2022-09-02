@@ -1,0 +1,1 @@
+flake8>=3.9.2,<3.10             # Less than 3.10 to get 3.9 updates 
