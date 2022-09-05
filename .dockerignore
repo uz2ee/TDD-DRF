@@ -1,3 +1,5 @@
+# This file is to ignore the files that we do not want/necessary inside the running docker container 
+
 # git 
 .git 
 .gitignore 
