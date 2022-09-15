@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def craete(self, validated_data):
+    def create(self, validated_data):
         """
         Create and return a user with encrypted password
         """
