@@ -2,3 +2,4 @@ Django>=3.2.4,<3.3                      # Between 3.2 and 3.3 to get 3.2 later r
 djangorestframework>=3.12.4,<3.13       # Between 3.12 and 3.13 to get 3.12 later releass
 psycopg2>=2.8.6,<2.9                    # Between 2.8.6 and 3.13 to get 2.9 later releass
 drf-spectacular>=0.15.1,<0.16           # Between 0.15.1 and 3.13 to get 0.16 later releass
+djangorestframework-simplejwt==5.2.0
