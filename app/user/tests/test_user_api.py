@@ -10,6 +10,8 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 CREATE_USER_URL = reverse('user:create')
+JWT_TOKEN_CREATE_URL = reverse('user:token-create')
+JWT_TOKEN_REFRESH_URL = reverse('user:token-refresh')
 
 
 def create_user(**params):
@@ -67,7 +69,6 @@ class PublicUserAPITests(TestCase):
             'password': 'pws',
             'name': 'Test',
         }
-
         result = self.client.post(CREATE_USER_URL, payload)
 
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
@@ -75,3 +76,47 @@ class PublicUserAPITests(TestCase):
             email=payload['email']
             ).exists()
         self.assertFalse(user_exists)
+
+    def test_create_jwt_for_user(self):
+        """
+        Test JWT token create
+        """
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass',
+            'name': 'Test'
+        }
+        create_user(**payload)
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass'
+        }
+        result = self.client.post(JWT_TOKEN_CREATE_URL, payload)
+        self.assertIn('access', result.data)
+        self.assertIn('refresh', result.data)
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+
+
+    def test_refresh_jwt_for_user(self):
+        """
+        Test JWT token create
+        """
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass',
+            'name': 'Test'
+        }
+        create_user(**payload)
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass'
+        }
+        result = self.client.post(JWT_TOKEN_CREATE_URL, payload)
+        refresh_token = result.data['refresh']
+        payload = {
+            'refresh': refresh_token
+        }
+        result = self.client.post(JWT_TOKEN_REFRESH_URL, payload)
+
+        self.assertIn('access', result.data)
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
