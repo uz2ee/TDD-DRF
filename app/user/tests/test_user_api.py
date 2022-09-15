@@ -16,7 +16,7 @@ def create_user(**params):
     """
     Create and returns a new user
     """
-    return get_user_model().objects.crate_user(**params)
+    return get_user_model().objects.create_user(**params)
 
 
 class PublicUserAPITests(TestCase):
