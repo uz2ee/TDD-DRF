@@ -12,6 +12,7 @@ from rest_framework import status
 CREATE_USER_URL = reverse('user:create')
 JWT_TOKEN_CREATE_URL = reverse('user:token-create')
 JWT_TOKEN_REFRESH_URL = reverse('user:token-refresh')
+JWT_TOKEN_VERIFY_URL = reverse('user:token-verify')
 
 
 def create_user(**params):
@@ -96,10 +97,9 @@ class PublicUserAPITests(TestCase):
         self.assertIn('refresh', result.data)
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
-
     def test_refresh_jwt_for_user(self):
         """
-        Test JWT token create
+        Test JWT token refresh
         """
         payload = {
             'email': 'test@example.com',
@@ -119,4 +119,27 @@ class PublicUserAPITests(TestCase):
         result = self.client.post(JWT_TOKEN_REFRESH_URL, payload)
 
         self.assertIn('access', result.data)
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+
+    def test_verify_jwt_for_user(self):
+        """
+        Test JWT token verify
+        """
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass',
+            'name': 'Test'
+        }
+        create_user(**payload)
+        payload = {
+            'email': 'test@example.com',
+            'password': 'test__pass'
+        }
+        result = self.client.post(JWT_TOKEN_CREATE_URL, payload)
+        access_token = result.data['access']
+        payload = {
+            'token': access_token
+        }
+        result = self.client.post(JWT_TOKEN_VERIFY_URL, payload)
+
         self.assertEqual(result.status_code, status.HTTP_200_OK)
