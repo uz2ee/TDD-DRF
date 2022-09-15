@@ -78,7 +78,7 @@ class PublicUserAPITests(TestCase):
             ).exists()
         self.assertFalse(user_exists)
 
-    def test_create_jwt_for_user(self):
+    def test_create_jwt_for_user_success(self):
         """
         Test JWT token create
         """
@@ -97,7 +97,18 @@ class PublicUserAPITests(TestCase):
         self.assertIn('refresh', result.data)
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
-    def test_refresh_jwt_for_user(self):
+    def test_create_jwt_for_user_fail(self):
+        """
+        Test JWT token create
+        """
+        payload = {
+            'email': 'test@example.com',
+            'password': 'wrong__pass'
+        }
+        result = self.client.post(JWT_TOKEN_CREATE_URL, payload)
+        self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_refresh_jwt_for_user_success(self):
         """
         Test JWT token refresh
         """
@@ -121,7 +132,19 @@ class PublicUserAPITests(TestCase):
         self.assertIn('access', result.data)
         self.assertEqual(result.status_code, status.HTTP_200_OK)
 
-    def test_verify_jwt_for_user(self):
+    def test_refresh_jwt_for_user_fail(self):
+        """
+        Test JWT token refresh
+        """
+        payload = {
+            'refresh': 'wrong_token'
+        }
+        result = self.client.post(JWT_TOKEN_REFRESH_URL, payload)
+
+        self.assertNotIn('access', result.data)
+        self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_verify_jwt_for_user_success(self):
         """
         Test JWT token verify
         """
@@ -143,3 +166,14 @@ class PublicUserAPITests(TestCase):
         result = self.client.post(JWT_TOKEN_VERIFY_URL, payload)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
+
+    def test_verify_jwt_for_user_fail(self):
+        """
+        Test JWT token verify
+        """
+        payload = {
+            'token': 'wrong_access'
+        }
+        result = self.client.post(JWT_TOKEN_VERIFY_URL, payload)
+
+        self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
