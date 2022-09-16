@@ -28,6 +28,7 @@ class CacheHeaderMixin:
                         super(CacheHeaderMixin, self).dispatch))(
                             *args, **kwargs)
 
+
 class Cache:
     """
     Caching individual keys
