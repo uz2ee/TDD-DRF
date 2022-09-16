@@ -3,7 +3,7 @@ version: '3.9'
 services:
   app:
     image: app
-    build: 
+    build:
       context: .
       args:
         - DEV=true
@@ -13,9 +13,10 @@ services:
       - ./app:/app
     command: >
       sh -c "python manage.py wait_for_db &&
-             python manage.py migrate && 
+             python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     environment:
+      - APP_SECRET_KEY=_l_!ny2z$$m*+rvj06zaskjhfbajuwye78gwc3564dfkjsdkj$$o2v0&czu7!#um&+wquc2
       - POSTGRES_DB_USER=devuser
       - POSTGRES_DB_NAME=devdb
       - POSTGRES_DB_PASSWORD=dEv**UsEr
@@ -23,9 +24,10 @@ services:
       - POSTGRES_DB_PORT=5432
     depends_on:
       - db
+      - redis
 
   db:
-    image: postgres:13-alpine 
+    image: postgres:13-alpine
     volumes:
       - dev-db-data:/var/lib/postgresql/data
     environment:
@@ -33,7 +35,10 @@ services:
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=dEv**UsEr
 
+  redis:
+    image: redis:alpine
+
 
 volumes:
   dev-db-data:
-    driver: local  
+    driver: local
