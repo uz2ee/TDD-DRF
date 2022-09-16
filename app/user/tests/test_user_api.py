@@ -1,5 +1,6 @@
 """
-Test for user
+Test for user app
+Including JWT
 """
 
 from django.test import TestCase
@@ -13,6 +14,7 @@ CREATE_USER_URL = reverse('user:create')
 JWT_TOKEN_CREATE_URL = reverse('user:token-create')
 JWT_TOKEN_REFRESH_URL = reverse('user:token-refresh')
 JWT_TOKEN_VERIFY_URL = reverse('user:token-verify')
+USER_URL = reverse('user:self')
 
 
 def create_user(**params):
@@ -177,3 +179,64 @@ class PublicUserAPITests(TestCase):
         result = self.client.post(JWT_TOKEN_VERIFY_URL, payload)
 
         self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_retrieve_user_unauthorizzed(self):
+        """
+        Test retrieve self details
+        """
+        result = self.client.get(USER_URL)
+
+        self.assertEqual(result.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class PrivateUserAPITests(TestCase):
+    """
+    Test authenticated apis
+    """
+
+    def setUp(self):
+        self.user = create_user(
+            email='test@example.com',
+            password='test_password',
+            name='Test Name'
+        )
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
+
+    def test_retrieve_profile_success(self):
+        """
+        Test retrieve self details
+        """
+        result = self.client.get(USER_URL)
+
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result.data, {
+            'name': self.user.name,
+            'email': self.user.email
+        })
+
+    def test_post_not_allowed_on_self_profile_update(self):
+        """
+        Test post is not allowed in profile
+        """
+
+        result = self.client.post(USER_URL, {})
+
+        self.assertEqual(
+            result.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_update_user_profile(self):
+        """
+        Test update user profile test
+        """
+        payload = {
+            'password': 'test__pass',
+            'name': 'Updated Name'
+        }
+        result = self.client.patch(USER_URL, payload)
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(payload['password']))
+        self.assertEqual(self.user.name, payload['name'])
+        self.assertEqual(result.status_code, status.HTTP_200_OK)
