@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "55208289-d1be-4fc6-b920-f2eb453eda21",
+    "colId": "bc0da85c-94c7-4daa-911d-8dfbb4af2401",
+    "containerId": "",
+    "name": "Get JWT",
+    "url": "{{url}}/api/user/token/create/",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-09-19T20:07:32.916Z",
+    "modified": "2022-09-19T20:10:31.866Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "formdata",
+      "raw": "",
+      "form": [
+        {
+          "name": "email",
+          "value": "uzzal@example.com"
+        },
+        {
+          "name": "password",
+          "value": "uzzal"
+        }
+      ]
+    },
+    "tests": []
+  }
+]

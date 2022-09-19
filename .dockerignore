@@ -1,11 +1,12 @@
-# This file is to ignore the files that we do not want/necessary inside the running docker container 
+# This file is to ignore the files that we do not want/necessary inside the running docker container
 
-# git 
-.git 
-.gitignore 
+# git
+.git
+.gitignore
+.github
 
-# docker 
-.docker 
+# docker
+.docker
 
 # python
 app/__pycache__/
@@ -13,6 +14,12 @@ app/*/__pycache__/
 app/*/*/__pycache__/
 app/*/*/*/__pycache__/
 app/*/*/*/*/__pycache__/
-.env 
+.env
 .venv/
 venv/
+
+# Vscode
+.vscode
+
+# Thunder client
+.postman
