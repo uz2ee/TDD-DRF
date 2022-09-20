@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 
 CUSTOM_APPS = [
     'core',
+    'recipe',
     'user',
 ]
 
