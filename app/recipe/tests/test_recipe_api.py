@@ -30,7 +30,7 @@ def create_recipe(user, **params):
         'link': 'http://example.com/recipe.pdf'
     }
     defaults.update(params)
-    return Recipe.objects.create_user(user=user,**defaults)
+    return Recipe.objects.create(created_by=user, **defaults)
 
 
 class PublicRecipeAPITests(TestCase):
@@ -56,7 +56,7 @@ class PrivateRecipeAPITests(TestCase):
     """
 
     def setUp(self):
-        self.user = create_user(
+        self.user = get_user_model().objects.create_user(
             email='test@example.com',
             password='test_password',
             name='Test Name'
@@ -73,7 +73,7 @@ class PrivateRecipeAPITests(TestCase):
 
         result = self.client.get(RECIPES_URL)
 
-        recipies = Recipe.objects.all().order_by('-id')
+        recipes = Recipe.objects.all().order_by('-id')
         serializer = RecipeSerializer(recipes, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
@@ -84,7 +84,7 @@ class PrivateRecipeAPITests(TestCase):
         Test retrieve recipe list
         """
 
-        other_user = create_user(
+        self.other_user = get_user_model().objects.create_user(
             email='test2@example.com',
             password='test2_password',
             name='Test Name 2'
@@ -96,7 +96,7 @@ class PrivateRecipeAPITests(TestCase):
 
         result = self.client.get(RECIPES_URL)
 
-        recipies = Recipe.objects.filter(created_by=self.user).order_by('-id')
+        recipes = Recipe.objects.filter(created_by=self.user).order_by('-id')
         serializer = RecipeSerializer(recipes, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
