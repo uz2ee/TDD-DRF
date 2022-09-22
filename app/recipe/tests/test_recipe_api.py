@@ -183,7 +183,7 @@ class PrivateRecipeAPITests(TestCase):
         payload = {
             'title': 'New title',
             'link': 'https://example.com/new',
-            'description' : 'new',
+            'description': 'new',
             'time_minutes': 10,
             'price': Decimal('3.00')
         }
@@ -211,7 +211,7 @@ class PrivateRecipeAPITests(TestCase):
         payload = {
             'title': 'New title',
             'link': 'https://example.com/new',
-            'description' : 'new',
+            'description': 'new',
             'time_minutes': 10,
         }
 
@@ -271,7 +271,9 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_delete_recipe(self):
-
+        """
+        Test delete recipe
+        """
         recipe = create_recipe(user=self.user)
 
         url = detail_url(recipe.uuid)
@@ -280,3 +282,19 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(result.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Recipe.objects.filter(uuid=recipe.uuid).exists())
 
+    def test_delete_recipe_of_other_user(self):
+        """
+        Test delete recipe of other users
+        """
+        new_user = create_user(
+            email='test2@example.com',
+            password='test2_password',
+            name='Test Name 2'
+        )
+        recipe = create_recipe(user=new_user)
+
+        url = detail_url(recipe.uuid)
+        result = self.client.delete(url)
+
+        self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(Recipe.objects.filter(uuid=recipe.uuid).exists())
