@@ -25,7 +25,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(
             created_by=self.request.user).order_by('-id')
 
-    def get_serializer_calss(self):
+    def get_serializer_class(self):
         """
         Return serializer class for request
         """

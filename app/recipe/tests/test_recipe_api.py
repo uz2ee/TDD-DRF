@@ -112,7 +112,6 @@ class PrivateRecipeAPITests(TestCase):
         self.assertEqual(result.status_code, status.HTTP_200_OK)
         self.assertEqual(result.data, serializer.data)
 
-
     def test_get_recipe_detail(self):
         """
         Test recipe details
@@ -121,7 +120,6 @@ class PrivateRecipeAPITests(TestCase):
 
         url = detail_url(recipe.uuid)
         result = self.client.get(url)
-
 
         serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(result.data, serializer.data)
