@@ -13,9 +13,19 @@ from rest_framework import status
 
 from core.models import Recipe
 
-from recipe.serializers import RecipeSerializer
+from recipe.serializers import (
+    RecipeSerializer,
+    RecipeDetailSerializer,
+)
 
 RECIPES_URL = reverse('recipe:recipe-list')
+
+
+def detail_url(recipe_uuid):
+    """
+    Create and return a recipe details url
+    """
+    return reverse('recipe:recipe-detail', args=[recipe_uuid])
 
 
 def create_recipe(user, **params):
@@ -100,4 +110,18 @@ class PrivateRecipeAPITests(TestCase):
         serializer = RecipeSerializer(recipes, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
+        self.assertEqual(result.data, serializer.data)
+
+
+    def test_get_recipe_detail(self):
+        """
+        Test recipe details
+        """
+        recipe = create_recipe(user=self.user)
+
+        url = detail_url(recipe.uuid)
+        result = self.client.get(url)
+
+
+        serializer = RecipeDetailSerializer(recipe)
         self.assertEqual(result.data, serializer.data)

@@ -21,3 +21,12 @@ class RecipeSerializer(serializers.ModelSerializer):
             'price',
             'link'
         ]
+
+
+class RecipeDetailSerializer(RecipeSerializer):
+    """
+    Detailed Serializer for recipe
+    """
+
+    class Meta(RecipeSerializer.Meta):
+        fields = RecipeSerializer.Meta.fields + ['description']

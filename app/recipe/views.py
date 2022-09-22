@@ -13,7 +13,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     """
     View to manage recipe apis
     """
-    serializer_class = serializers.RecipeSerializer
+    serializer_class = serializers.RecipeDetailSerializer
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = "uuid"
@@ -24,3 +24,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         return self.queryset.filter(
             created_by=self.request.user).order_by('-id')
+
+    def get_serializer_calss(self):
+        """
+        Return serializer class for request
+        """
+        if self.action == 'list':
+            return serializers.RecipeSerializer
+        return self.serializer_class
