@@ -11,6 +11,7 @@ class CreateUserAPIView(generics.CreateAPIView):
     Create new user
     """
     serializer_class = UserSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 class RetrieveUpdateUserAPIView(generics.RetrieveUpdateAPIView):

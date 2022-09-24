@@ -44,7 +44,7 @@ class PublicUserAPITests(TestCase):
         self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', result.data)
 
-    def test_user_with_email_exisit(self):
+    def test_user_with_email_exist(self):
         """
         Test if user can be created with existing created user email
         """
@@ -58,7 +58,7 @@ class PublicUserAPITests(TestCase):
 
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_pasword_length(self):
+    def test_password_length(self):
         """
         Test minimum password length
         """
