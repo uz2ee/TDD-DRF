@@ -10,18 +10,13 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
+from core.tests.test_models import create_user
+
 CREATE_USER_URL = reverse('user:create')
 JWT_TOKEN_CREATE_URL = reverse('user:token-create')
 JWT_TOKEN_REFRESH_URL = reverse('user:token-refresh')
 JWT_TOKEN_VERIFY_URL = reverse('user:token-verify')
 USER_URL = reverse('user:self')
-
-
-def create_user(**params):
-    """
-    Create and returns a new user
-    """
-    return get_user_model().objects.create_user(**params)
 
 
 class PublicUserAPITests(TestCase):
@@ -49,7 +44,7 @@ class PublicUserAPITests(TestCase):
         self.assertTrue(user.check_password(payload['password']))
         self.assertNotIn('password', result.data)
 
-    def test_user_with_email_exisit(self):
+    def test_user_with_email_exist(self):
         """
         Test if user can be created with existing created user email
         """
@@ -63,7 +58,7 @@ class PublicUserAPITests(TestCase):
 
         self.assertEqual(result.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_pasword_length(self):
+    def test_password_length(self):
         """
         Test minimum password length
         """

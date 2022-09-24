@@ -2,10 +2,16 @@
 Views for recipe apis
 """
 
-from rest_framework import viewsets
+from rest_framework import (
+    viewsets,
+    mixins,
+)
 from rest_framework.permissions import IsAuthenticated
 
-from core.models import Recipe
+from core.models import (
+    Recipe,
+    Tag,
+)
 from recipe import serializers
 
 
@@ -38,6 +44,33 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Create recipe
         """
         serializer.save(created_by=self.request.user)
+
+    def perform_update(self, serializer):
+        """
+        Update recipe
+        """
+        serializer.save(updated_by=self.request.user)
+
+
+class TagViewSet(mixins.DestroyModelMixin,
+                 mixins.UpdateModelMixin,
+                 mixins.ListModelMixin,
+                 viewsets.GenericViewSet):
+    """
+    Manage tags in database
+    """
+
+    serializer_class = serializers.TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_field = "uuid"
+
+    def get_queryset(self):
+        """
+        Retrieve tags of the user
+        """
+        return self.queryset.filter(
+            created_by=self.request.user).order_by('-name')
 
     def perform_update(self, serializer):
         """
