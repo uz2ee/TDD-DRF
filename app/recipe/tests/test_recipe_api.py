@@ -17,7 +17,7 @@ from recipe.serializers import (
     RecipeDetailSerializer,
 )
 
-from user.tests.test_user_api import create_user
+from core.tests.test_models import create_user, create_recipe
 
 RECIPES_URL = reverse('recipe:recipe-list')
 
@@ -27,21 +27,6 @@ def detail_url(recipe_uuid):
     Create and return a recipe details url
     """
     return reverse('recipe:recipe-detail', args=[recipe_uuid])
-
-
-def create_recipe(user, **params):
-    """
-    Create and returns a new recipe
-    """
-    defaults = {
-        'title': 'Sample recipe title',
-        'time_minutes': 10,
-        'price': Decimal('5.75'),
-        'description': 'Sample description',
-        'link': 'http://example.com/recipe.pdf'
-    }
-    defaults.update(params)
-    return Recipe.objects.create(created_by=user, **defaults)
 
 
 class PublicRecipeAPITests(TestCase):

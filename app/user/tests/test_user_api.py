@@ -10,18 +10,13 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 
+from core.tests.test_models import create_user
+
 CREATE_USER_URL = reverse('user:create')
 JWT_TOKEN_CREATE_URL = reverse('user:token-create')
 JWT_TOKEN_REFRESH_URL = reverse('user:token-refresh')
 JWT_TOKEN_VERIFY_URL = reverse('user:token-verify')
 USER_URL = reverse('user:self')
-
-
-def create_user(**params):
-    """
-    Create and returns a new user
-    """
-    return get_user_model().objects.create_user(**params)
 
 
 class PublicUserAPITests(TestCase):

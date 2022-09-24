@@ -7,7 +7,31 @@ from decimal import Decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from core import models
+from core.models import (
+    Recipe,
+)
+
+
+def create_user(**params):
+    """
+    Create and returns a new user
+    """
+    return get_user_model().objects.create_user(**params)
+
+
+def create_recipe(user, **params):
+    """
+    Create and returns a new recipe
+    """
+    defaults = {
+        'title': 'Sample recipe title',
+        'time_minutes': 10,
+        'price': Decimal('5.75'),
+        'description': 'Sample description',
+        'link': 'http://example.com/recipe.pdf'
+    }
+    defaults.update(params)
+    return Recipe.objects.create(created_by=user, **defaults)
 
 
 class ModelTests(TestCase):
@@ -21,7 +45,7 @@ class ModelTests(TestCase):
         email = 'test@example.com'
         password = 'test_pass'
 
-        user = get_user_model().objects.create_user(
+        user = create_user(
             email=email,
             password=password,
         )
@@ -40,15 +64,15 @@ class ModelTests(TestCase):
             ['Test4@example.COM', 'Test4@example.com'],
         ]
         for email, expected in samlple_emails:
-            user = get_user_model().objects.create_user(email, 'test_123')
+            user = create_user(email=email, password='test_123')
             self.assertEqual(user.email, expected)
 
-    def test_new_user_withou_email_address(self):
+    def test_new_user_without_email_address(self):
         """
         Test user without email, raises value error
         """
         with self.assertRaises(ValueError):
-            get_user_model().objects.create_user('', 'test_123')
+            create_user(email='', password='test_123')
 
     def test_create_superuser(self):
         """
@@ -75,13 +99,13 @@ class ModelTests(TestCase):
         email = 'test@example.com'
         password = 'test_pass'
 
-        user = get_user_model().objects.create_user(
+        user = create_user(
             email=email,
             password=password,
         )
 
-        recipe = models.Recipe.objects.create(
-            created_by=user,
+        recipe = create_recipe(
+            user=user,
             title='Test Recipe',
             time_minutes=5,
             price=Decimal('5.00'),
