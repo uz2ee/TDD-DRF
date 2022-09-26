@@ -18,7 +18,6 @@ from recipe.serializers import (
 from core.tests.test_models import (
     create_user,
     create_ingredient,
-    create_ingredient,
 )
 
 INGREDIENTS_URL = reverse('recipe:ingredient-list')
@@ -71,7 +70,7 @@ class PrivateIngredientAPITests(TestCase):
 
         result = self.client.get(INGREDIENTS_URL)
 
-        ingredients = ingredient.objects.all().order_by('-name')
+        ingredients = Ingredient.objects.all().order_by('-name')
         serializer = IngredientSerializer(ingredients, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
@@ -92,9 +91,10 @@ class PrivateIngredientAPITests(TestCase):
         create_ingredient(self.other_user)
         create_ingredient(self.other_user)
 
-        result = self.client.get(ingredientS_URL)
+        result = self.client.get(INGREDIENTS_URL)
 
-        ingredients = Ingredient.objects.filter(created_by=self.user).order_by('-name')
+        ingredients = Ingredient.objects.filter(
+            created_by=self.user).order_by('-name')
         serializer = IngredientSerializer(ingredients, many=True)
 
         self.assertEqual(result.status_code, status.HTTP_200_OK)
@@ -189,7 +189,8 @@ class PrivateIngredientAPITests(TestCase):
         result = self.client.delete(url)
 
         self.assertEqual(result.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertFalse(ingredient.objects.filter(uuid=ingredient.uuid).exists())
+        self.assertFalse(Ingredient.objects.filter(
+            uuid=ingredient.uuid).exists())
 
     def test_delete_ingredient_of_other_user(self):
         """
@@ -206,4 +207,5 @@ class PrivateIngredientAPITests(TestCase):
         result = self.client.delete(url)
 
         self.assertEqual(result.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertTrue(ingredient.objects.filter(uuid=ingredient.uuid).exists())
+        self.assertTrue(Ingredient.objects.filter(
+            uuid=ingredient.uuid).exists())
