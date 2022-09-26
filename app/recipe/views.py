@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from core.models import (
     Recipe,
     Tag,
+    Ingredient,
 )
 from recipe import serializers
 
@@ -28,8 +29,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
         Retrieve recipe of the user
         """
+        if self.action == 'list':
+            return self.queryset.filter(
+                created_by=self.request.user).order_by('-id')
         return self.queryset.filter(
-            created_by=self.request.user).order_by('-id')
+                created_by=self.request.user).order_by(
+                    '-id').prefetch_related('tags', 'ingredients')
 
     def get_serializer_class(self):
         """
@@ -62,6 +67,32 @@ class TagViewSet(mixins.DestroyModelMixin,
 
     serializer_class = serializers.TagSerializer
     queryset = Tag.objects.all()
+    permission_classes = [IsAuthenticated]
+    lookup_field = "uuid"
+
+    def get_queryset(self):
+        """
+        Retrieve tags of the user
+        """
+        return self.queryset.filter(
+            created_by=self.request.user).order_by('-name')
+
+    def perform_update(self, serializer):
+        """
+        Update recipe
+        """
+        serializer.save(updated_by=self.request.user)
+
+
+class IngredientViewSet(mixins.DestroyModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+    """
+    Manage ingredients in database
+    """
+    serializer_class = serializers.IngredientSerializer
+    queryset = Ingredient.objects.all()
     permission_classes = [IsAuthenticated]
     lookup_field = "uuid"
 
