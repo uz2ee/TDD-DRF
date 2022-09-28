@@ -111,3 +111,20 @@ class RecipeDetailSerializer(RecipeSerializer):
 
     class Meta(RecipeSerializer.Meta):
         fields = RecipeSerializer.Meta.fields + ['description']
+
+
+class RecipeImageSerializer(serializers.ModelSerializer):
+    """
+    Serialzier for uploading image
+    """
+    class Meta:
+        model = Recipe
+        fields = [
+            'uuid',
+            'image'
+        ]
+        extra_kwargs = {
+            'image': {
+                'required': 'True'
+            }
+        }

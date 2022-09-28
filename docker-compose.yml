@@ -43,5 +43,5 @@ services:
 volumes:
   dev-db-data:
     driver: local
-  dev-statc-data:
+  dev-static-data:
     driver: local
