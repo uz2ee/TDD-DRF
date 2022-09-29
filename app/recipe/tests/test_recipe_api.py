@@ -572,7 +572,7 @@ class PrivateRecipeAPITests(TestCase):
         recipe_2.tags.add(tag_1)
 
         params = {
-            'tags': f'{tag_1.uuid},{tag_2.uuid}'
+            'tags': f'{tag_1.name},{tag_2.name}'
         }
         result = self.client.get(RECIPES_URL, params)
         recipe_1_serialized_data = RecipeSerializer(recipe_1)
@@ -597,7 +597,7 @@ class PrivateRecipeAPITests(TestCase):
         recipe_2.ingredients.add(ingredient_1)
 
         params = {
-            'ingredients': f'{ingredient_1.uuid},{ingredient_2.uuid}'
+            'ingredients': f'{ingredient_1.name},{ingredient_2.name}'
         }
         result = self.client.get(RECIPES_URL, params)
         recipe_1_serialized_data = RecipeSerializer(recipe_1)

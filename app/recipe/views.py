@@ -1,8 +1,6 @@
 """
 Views for recipe apis
 """
-
-import uuid
 from drf_spectacular.utils import (
     extend_schema_view,
     extend_schema,
@@ -51,11 +49,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "uuid"
 
-    def _get_uuid_list_from_string(self, uuid_string):
+    def _get_item_list_from_string(self, query):
         """
         Split and return uuid
         """
-        return [uuid.UUID(_uuid) for _uuid in uuid_string.split(',')]
+        return [str(item) for item in query.split(',')]
 
     def get_queryset(self):
         """
@@ -66,14 +64,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             tags = self.request.query_params.get('tags')
             ingredients = self.request.query_params.get('ingredients')
             if tags:
-                tags_uuid_list = self._get_uuid_list_from_string(tags)
+                tags_name_list = self._get_item_list_from_string(tags)
                 queryset = queryset.filter(
-                    tags__uuid__in=tags_uuid_list)
+                    tags__name__in=tags_name_list)
             if ingredients:
-                ingredients_uuid_list = self._get_uuid_list_from_string(
+                ingredients_name_list = self._get_item_list_from_string(
                     ingredients)
                 queryset = queryset.filter(
-                    ingredients__uuid__in=ingredients_uuid_list)
+                    ingredients__name__in=ingredients_name_list)
             return queryset.filter(
                 created_by=self.request.user).order_by('-id')
         return queryset.filter(
