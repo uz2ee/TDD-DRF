@@ -1,7 +1,12 @@
 """
 Views for recipe apis
 """
-
+from drf_spectacular.utils import (
+    extend_schema_view,
+    extend_schema,
+    OpenApiParameter,
+    OpenApiTypes,
+)
 from rest_framework import (
     viewsets,
     mixins,
@@ -19,6 +24,22 @@ from core.models import (
 from recipe import serializers
 
 
+@extend_schema_view(
+    list=extend_schema(
+        parameters=[
+            OpenApiParameter(
+                'tags',
+                OpenApiTypes.STR,
+                description='Comma seperated list of tag uuid to filter'
+            ),
+            OpenApiParameter(
+                'ingredients',
+                OpenApiTypes.STR,
+                description='Comma seperated list of ingredient uuid to filter'
+            )
+        ]
+    )
+)
 class RecipeViewSet(viewsets.ModelViewSet):
     """
     View to manage recipe apis
@@ -28,16 +49,36 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "uuid"
 
+    def _get_item_list_from_string(self, query):
+        """
+        Split and return uuid
+        """
+        return [str(item) for item in query.split(',')]
+
     def get_queryset(self):
         """
         Retrieve recipe of the user
         """
+        queryset = self.queryset
         if self.action == 'list':
-            return self.queryset.filter(
+            tags = self.request.query_params.get('tags')
+            ingredients = self.request.query_params.get('ingredients')
+            if tags:
+                tags_name_list = self._get_item_list_from_string(tags)
+                queryset = queryset.filter(
+                    tags__name__in=tags_name_list)
+            if ingredients:
+                ingredients_name_list = self._get_item_list_from_string(
+                    ingredients)
+                queryset = queryset.filter(
+                    ingredients__name__in=ingredients_name_list)
+            return queryset.filter(
                 created_by=self.request.user).order_by('-id')
-        return self.queryset.filter(
+        return queryset.filter(
                 created_by=self.request.user).order_by(
-                    '-id').prefetch_related('tags', 'ingredients')
+                    '-id').distinct().prefetch_related(
+                        'tags',
+                        'ingredients')
 
     def get_serializer_class(self):
         """
