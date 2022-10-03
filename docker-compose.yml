@@ -23,6 +23,7 @@ services:
       - POSTGRES_DB_PASSWORD=dEv**UsEr
       - POSTGRES_DB_HOST=db
       - POSTGRES_DB_PORT=5432
+      - DEBUG=1
     depends_on:
       - db
       - redis
