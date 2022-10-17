@@ -24,6 +24,7 @@ services:
       - POSTGRES_DB_HOST=db
       - POSTGRES_DB_PORT=5432
       - DEBUG=1
+      - ALLOWED_HOSTS=127.0.0.1,localhost
     depends_on:
       - db
       - redis
