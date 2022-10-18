@@ -19,15 +19,15 @@ RUN python -m venv /py && \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
-    apk del .tem-build-deps && \
-    adduser \
+    apk del .tem-build-deps
+RUN adduser \
         --disabled-password \
         --no-create-home \
         django-user && \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
-    chown -R django-user:django-user /vol && \
-    chmod -R 755 /vol && \
+    chown -R django-user:django-user /app && \
+    chmod -R 755 /app && \
     chmod -R +x /scripts
 
 ENV PATH="/scripts:/py/bin:$PATH"
