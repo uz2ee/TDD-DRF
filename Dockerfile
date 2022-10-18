@@ -27,7 +27,9 @@ RUN adduser \
     mkdir -p /vol/web/media && \
     mkdir -p /vol/web/static && \
     chown -R django-user:django-user /app && \
+    chown -R django-user:django-user /vol && \
     chmod -R 755 /app && \
+    chmod -R 755 /vol && \
     chmod -R +x /scripts
 
 ENV PATH="/scripts:/py/bin:$PATH"
