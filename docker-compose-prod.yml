@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  app:
+    build: 
+      context: .
+    restart: always
+    volumes:
+      - static-data:/vol/web
+    environment:
+      - APP_SECRET_KEY=${APP_SECRET_KEY}
+      - POSTGRES_DB_USER=${POSTGRES_DB_USER}
+      - POSTGRES_DB_NAME=${POSTGRES_DB_NAME}
+      - POSTGRES_DB_PASSWORD=${POSTGRES_DB_PASSWORD}
+      - POSTGRES_DB_HOST=db
+      - POSTGRES_DB_PORT=5432
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB_NAME}
+      - POSTGRES_USER=${POSTGRES_DB_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_DB_PASSWORD}
+
+  redis:
+    image: redis:alpine
+
+
+  proxy:
+    build: 
+      context: ./proxy 
+    restart: always 
+    depends_on:
+      - app
+
+    ports:
+      - 80:8000
+    volumes:
+      - static-data:/vol/static
+
+volumes:
+  postgres-data:
+    driver: local
+  static-data:
+    driver: local
