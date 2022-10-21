@@ -14,9 +14,9 @@ RUN python -m venv /py && \
     apk add --update --no-cache postgresql-client jpeg-dev && \
     apk add --update --no-cache --virtual .tem-build-deps \
         build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
-    /py/bin/pip install -r /tmp/requirements.txt && \
+    /py/bin/pip install -r /tmp/requirements.txt --use-pep517 && \
     if [ $DEV = "true" ]; \
-        then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
+        then /py/bin/pip install -r /tmp/requirements.dev.txt --use-pep517; \
     fi && \
     rm -rf /tmp && \
     apk del .tem-build-deps
